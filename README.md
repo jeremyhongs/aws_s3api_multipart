@@ -45,6 +45,7 @@ aws s3api complete-multipart-upload --multipart-upload _JSONFILEPATH_ --bucket _
 
 # AWS S3 Multipart Download
 - 다운로드 따라하기 URL : https://aws.amazon.com/ko/blogs/korea/amazon-s3-multi-part-dowload/
-- URL 내용처럼, Upload처럼 별도의 API는 없음
-- URL에 있는 s3md.sh을 사용하면 됨
-- URL에 써있는 예제는 Bucket 기준으로 작성 되었고, 하위 객체로 접근하기 위한 방법을 알아야 함 (아래 기재되어있으니 확인 하기 바람)
+- S3 Multipart download는 upload처럼 별도의 API가 존재하는 것은 아니며, 기재된 스크립트를 이용해서 활용 해야 하는 부분
+- 활용시 사용되는 API는 list-objects, get-object를 이용하게 되며 필요에 따라 argument를 익힐 수 있도록 할 것
+- 스크립트를 나만의 것으로 만들어서 사용 하면 됨
+- 해당 예제는 bucket을 기준으로 작성 되었고, 하위 object로 접근 하기 위한 방법을 알아두면 좋음
