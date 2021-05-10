@@ -2,9 +2,9 @@
 - __기본적으로 Amazon S3에 올릴 수 있는 Object max size는 5GB__
 - __따라서 5GB보다 큰 object는 Multipart Upload를 이용해야 하며, 업로드 최대 사이즈는 5TB__
 - Object size가 over 100MB의 경우, Multipart Upload 이용 할 것을 권장
-- S3 Multipart download는 upload처럼 별도의 API가 존재하는 것이 아니고, API를 혼합해서 스크립트로 만들고 이를 활용해야 함 (s3-test.sh 참고)
-- S3 Multipart upload 제야 조건도 확인 해 볼 것 (refer : https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html)
-- 이외 작업 전 AWS configure를 조절하기 바람
+- S3 Multipart download는 upload처럼 별도의 API가 존재하는 것이 아니고, API를 혼합해서 스크립트로 만들고 이를 활용 (s3-test.sh 참고)
+- S3 Multipart upload 제약 조건 (refer : https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html)
+- 이외 작업 전 AWS configure를 조절 필요
   > max_concurrent_request / max_queue_size / multipart-threshold / multipart-chunksize
 
 # #Environment
@@ -47,9 +47,8 @@
 
 ## 2. AWS S3 Multipart Download
 - 다운로드 따라하기 URL : https://aws.amazon.com/ko/blogs/korea/amazon-s3-multi-part-dowload/
-- 활용시 사용되는 API는 list-objects, get-object를 이용하게 되며 필요에 따라 argument를 익힐 수 있도록 할 것
-- 스크립트를 나만의 것으로 만들어서 사용 하면 됨
-- 해당 예제는 bucket을 기준으로 작성, s3api CLI 활용법 같이 알아 둘 것
+- 사용되는 API는 list-objects, get-object
+- 해당 예제는 bucket을 기준으로 작성, s3api cli 활용법 같이 알아 둘 것
   * [list-object](https://docs.aws.amazon.com/cli/latest/reference/s3api/list-objects.html), [get-object](https://docs.aws.amazon.com/cli/latest/reference/s3api/get-object.html)
 
 ### 2.1 Step flow (Linux 환경에 AWS CLI 설치 가정)
