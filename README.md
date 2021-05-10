@@ -2,7 +2,7 @@
 - __기본적으로 Amazon S3에 올릴 수 있는 Object max size는 5GB__
 - __따라서 5GB보다 큰 object는 Multipart Upload를 이용해야 하며, 업로드 최대 사이즈는 5TB__
 - Object size가 over 100MB의 경우, Multipart Upload 이용 할 것을 권장
-- S3 Multipart download는 upload처럼 별도의 API가 존재하는 것이 아니고, API를 혼합해서 스크립트로 만들고 이를 활용해야 함 (s3getobj.sh 참고)
+- S3 Multipart download는 upload처럼 별도의 API가 존재하는 것이 아니고, API를 혼합해서 스크립트로 만들고 이를 활용해야 함 (s3-test.sh 참고)
 - S3 Multipart upload 제야 조건도 확인 해 볼 것 (refer : https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html)
 - 이외 작업 전 AWS configure를 조절하기 바람
   > max_concurrent_request / max_queue_size / multipart-threshold / multipart-chunksize
@@ -69,5 +69,5 @@ aws s3api complete-multipart-upload --multipart-upload _JSONFILEPATH_ --bucket _
 - 모든 part들이 다운로드 될 때 까지 대기
 - 다운로드 된 모든 part들을 하나로 묶기
 ```
-- 위 선행 조건들은 모두 첨부된 s3getobj.sh에 포함된 내용 (스크립트 분석 하면 됨)
+- 위 선행 조건들은 모두 첨부된 s3-test.sh에 포함된 내용 (스크립트 분석 하면 됨)
 - 각자의 서비스에 맞춰서 스크립트 수정해서 사용하면 됨
