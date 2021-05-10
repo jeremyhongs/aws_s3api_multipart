@@ -1,7 +1,7 @@
 # AWS S3 Multipart Upload
 - 업로드 따라해보기 URL : https://aws.amazon.com/ko/premiumsupport/knowledge-center/s3-multipart-upload-cli/
+- __Multipart Upload API 활용시 이점__
 ```
-Multipart Upload API 활용시 이점
 - 최종 개체 크기를 알기 전에 업로드 시작 가능 (You can begin an upload before you know the final object size)
 - 모든 네트워크 문제에서 신속하게 복구 가능 (Quick recovery from any network issues)
 - 객체 업로드를 일시 중지 및 다시 시작 가능 (Pause and resume object uplaods)
@@ -9,6 +9,7 @@ Multipart Upload API 활용시 이점
 
 ## Test Environment
 - Docker + Ubuntu + AWS CLIv2
+- docker run -it -v __SOURCE_MOUNTPATH__:__TARGET_MOUNTPATH__ __OS-DOCKERIMAGE:TAG__
 
 ### Step flow (Linux 환경에 AWS CLI 설치 가정)
 - 무결성 체크에 필요한 md5 key 생성 (refer : https://aws.amazon.com/ko/premiumsupport/knowledge-center/data-integrity-s3/)
