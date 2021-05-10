@@ -6,6 +6,7 @@
 - 모든 네트워크 문제에서 신속하게 복구 가능 (Quick recovery from any network issues)
 - 객체 업로드를 일시 중지 및 다시 시작 가능 (Pause and resume object uplaods)
 ```
+- __Multipart Upload 제한__ : https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/qfacts.html
 
 ## Test Environment
 - Docker + Ubuntu + AWS CLIv2
