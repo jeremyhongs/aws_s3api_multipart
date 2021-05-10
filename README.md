@@ -12,44 +12,35 @@
 - Docker에서 exit하면 이미지에서 작업하는 환경 날라갈테니, 어느정도 base env 구축해두고 commit or compile로 이미지 만들어놓고 사용 할 것
 - 그리고 Docker 실행 할 때, disk mount (-v) 할 것. (작업한 파일 갖고있기 위함)
 
+
+
 ## 1. AWS S3 Multipart Upload
 - 업로드 따라해보기 URL : https://aws.amazon.com/ko/premiumsupport/knowledge-center/s3-multipart-upload-cli/
 - __Multipart Upload API 활용시 이점__
-```
-- 최종 개체 크기를 알기 전에 업로드 시작 가능 (You can begin an upload before you know the final object size)
-- 모든 네트워크 문제에서 신속하게 복구 가능 (Quick recovery from any network issues)
-- 객체 업로드를 일시 중지 및 다시 시작 가능 (Pause and resume object uplaods)
-```
+  * 최종 개체 크기를 알기 전에 업로드 시작 가능 (You can begin an upload before you know the final object size)
+  * 모든 네트워크 문제에서 신속하게 복구 가능 (Quick recovery from any network issues)
+  * 객체 업로드를 일시 중지 및 다시 시작 가능 (Pause and resume object uplaods)
+
 - __Multipart Upload 제한__ : https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/qfacts.html
 
 ### 1.1 Step flow (Linux 환경에 AWS CLI 설치 가정)
 - 무결성 체크에 필요한 md5 key 생성 (refer : https://aws.amazon.com/ko/premiumsupport/knowledge-center/data-integrity-s3/)
 - 큰 파일을 split 명령어로 쪼개 둘 것 (refer : https://jhnyang.tistory.com/209)
 - 쪼개어진 파일에 대한 MD5 key 생성 할 것 (openssl)
-```
-openssl md5 -binary FILE-PATH+FILE-NAME | base64
-```
+  * **openssl md5 -binary FILE-PATH+FILE-NAME | base64**
 - ETag & VersionID 가져오기
-```
-aws s3api put-object --bucket _BUCKETNAME_ --key _ORIGINFILENAME_ --body _FILEPATH_ --content-md5 _MD5KEYVALUE_
-```
+  * **aws s3api put-object --bucket _BUCKETNAME_ --key _ORIGINFILENAME_ --body _FILEPATH_ --content-md5 _MD5KEYVALUE_**
 - Split file upload (repeat)
-```
-aws s3api upload-part --bucket _BUCKETNAME_ --key _ORGINFILENAME_ --part-numer _COUNTNUMER_ --body _FILEPATH_ --uploadid _UPLOADIDVALUE_ --content-md5 _MD5KEYVALUE_
-- part-number : split된 파일 수 (start with : 1)
+  * **aws s3api upload-part --bucket _BUCKETNAME_ --key _ORGINFILENAME_ --part-numer _COUNTNUMER_ --body _FILEPATH_ --uploadid _UPLOADIDVALUE_ --content-md5 _MD5KEYVALUE_**
+    * part-number : split된 파일 수 (start with : 1)
 - ETag 정보 가져올 것
-```
-- Upload 완료 후
-```
-aws s3api list-parts --bucket _BUCKETNAME_ --key _ORIGINFILENAME_ --upload-id _UPLOADIDVALUE_
+  * Upload 완료 후
+    * **aws s3api list-parts --bucket _BUCKETNAME_ --key _ORIGINFILENAME_ --upload-id _UPLOADIDVALUE_**
 - Upload된 전체 파일 리스트
-```
-- ETage 정보를 이용하여 json 파일 생성 (예,fileparts.json)
-- Multi-part Upload Complete
-```
-aws s3api complete-multipart-upload --multipart-upload _JSONFILEPATH_ --bucket _BUCKETNAME_ --key _ORIGINFILENAME_ --upload-id _UPLOADIDVALUE_
-- Output 정상적인지 확인
-```
+  * ETage 정보를 이용하여 json 파일 생성 (예,fileparts.json)
+  * Multi-part Upload Complete
+    * **aws s3api complete-multipart-upload --multipart-upload _JSONFILEPATH_ --bucket _BUCKETNAME_ --key _ORIGINFILENAME_ --upload-id _UPLOADIDVALUE_**
+- Output 확인
 - S3 업로드 파일 확인
 
 
@@ -58,16 +49,23 @@ aws s3api complete-multipart-upload --multipart-upload _JSONFILEPATH_ --bucket _
 - 다운로드 따라하기 URL : https://aws.amazon.com/ko/blogs/korea/amazon-s3-multi-part-dowload/
 - 활용시 사용되는 API는 list-objects, get-object를 이용하게 되며 필요에 따라 argument를 익힐 수 있도록 할 것
 - 스크립트를 나만의 것으로 만들어서 사용 하면 됨
-- 해당 예제는 bucket을 기준으로 작성 되었고, 하위 object로 접근 하기 위한 방법도 같이 알아 둘 것
+- 해당 예제는 bucket을 기준으로 작성, s3api CLI 활용법 같이 알아 둘 것
+  * [list-object](https://docs.aws.amazon.com/cli/latest/reference/s3api/list-objects.html), [get-object](https://docs.aws.amazon.com/cli/latest/reference/s3api/get-object.html)
 
 ### 2.1 Step flow (Linux 환경에 AWS CLI 설치 가정)
 - Pre-requisites
-```
-- download 하려는 S3상의 object size check
-- 사용자가 원하는 분할 개수의 맞도록 파트 크기 계산
-- Range Get을 이용해서 object의 파트들을 병렬적으로 다운로드
-- 모든 part들이 다운로드 될 때 까지 대기
-- 다운로드 된 모든 part들을 하나로 묶기
-```
-- 위 선행 조건들은 모두 첨부된 s3-test.sh에 포함된 내용 (스크립트 분석 하면 됨)
+  * download 하려는 S3상의 object size check
+  * 사용자가 원하는 분할 개수의 맞도록 파트 크기 계산
+  * Range Get을 이용해서 object의 파트들을 병렬적으로 다운로드
+  * 모든 part들이 다운로드 될 때 까지 대기
+  * 다운로드 된 모든 part들을 하나로 묶기
+- 위 선행 조건들은 첨부된 s3-test.sh에 포함된 내용 (스크립트 분석 하면 됨)
 - 각자의 서비스에 맞춰서 스크립트 수정해서 사용하면 됨
+
+### 2.2 Script (s3-test.sh)
+- Usage : **./s3-test.sh -b BUCKET_NAME -k KEYFILE_NAME -s SPLIT_COUNT**
+- Information
+  * THRESHOLD PART SIZE : Origin 파일을 나누고자 할 때 활용 할 Size
+  * OBJECT SIZE : 다운받고자 하는 파일 사이즈
+  * PART SIZE : Origin 파일의 사이즈를 SPLIT COUNT로 나눴을 때 사이즈
+    * Message : Each part size except last one must be larger than THRESHOLD_PART_SIZE
